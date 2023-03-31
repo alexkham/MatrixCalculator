@@ -1,38 +1,39 @@
 "use client";
 
-import { matrix, add, multiply, Matrix } from 'mathjs'
-import { useState } from 'react';
-import { getReStructuredMatrix } from '@/helpers/matrixHelper';
+import { Matrix } from 'mathjs'
+import { useEffect, useState } from 'react';
+import { MatrixDto, defaultMatrices, getMatrixAddition, getMatrixMultiplication, getReStructuredMatrix } from '@/helpers/matrixHelper';
 import MatrixComponent from './matrix';
 
-interface MatrixDto {
-    data: Matrix,
-    key: string
-}
-
 const MatrixViewComponent = () => {
-    const mA: Matrix = matrix([[1, 2, 3], [3, 4, 5], [5, 6, 7]]);
-    const mB: Matrix = matrix([[1, -1, 2], [2, -2, 2], [3, -3, 1]]);
+    const [matrices, setMatrices] = useState<MatrixDto[]>(defaultMatrices);
+    const [selectedItem, setSelection] = useState<number>(0);
+    const [changesCount, setChangesCount] = useState<number>(0);
 
-    // Matrix Addition
-    // const result = multiply(mA, mB);
-    const defaultMatrices: MatrixDto[] =
-        [{
-            data: mA,
-            key: "matrixA"
-        },
-        {
-            data: mB,
-            key: "matrixB"
-        }]
+    useEffect(() => {
+        const [mA, mB] = matrices;
+        const result =
+            selectedItem == 0
+                ? getMatrixAddition(mA.data, mB.data)
+                : getMatrixMultiplication(mA.data, mB.data);
 
-    const [matrices, setMatrices] =
-        useState<MatrixDto[]>(defaultMatrices);
-    // const [matrixB, setMatrixB] = useState(mB);
+        console.log("hi i am use effect")
+
+        setUpdatedMatrices("result", result);
+    }, [changesCount])
 
     const getOrDefaultMatrix = (key: string) => {
         return (matrices.find(m => m.key == key)
             || matrices[0]).data;
+    }
+
+    const initChange = () => {
+        setChangesCount(changesCount + 1);
+    }
+
+    const onButtonClick = (selectedItem: number) => {
+        setSelection(selectedItem);
+        initChange();
     }
 
     const onChangeSize = (key: string, [row, col]: [number, number]) => {
@@ -40,6 +41,7 @@ const MatrixViewComponent = () => {
             getReStructuredMatrix(getOrDefaultMatrix(key), [row, col]);
 
         setUpdatedMatrices(key, updatedMatrix);
+        initChange();
     }
 
     const onChangeFieldValue = (key: string, val: number, [row, col]: [number, number]) => {
@@ -49,6 +51,7 @@ const MatrixViewComponent = () => {
                 .set([row, col], val);
 
         setUpdatedMatrices(key, updatedMatrix);
+        initChange();
     }
 
     const setUpdatedMatrices = (key: string, updatedMatrix: Matrix) => {
@@ -59,8 +62,14 @@ const MatrixViewComponent = () => {
 
         let updatedMatrices = [...matrices];
         let index = updatedMatrices.findIndex(m => m.key == key);
-        updatedMatrices[index] = newDto;
-        console.log(updatedMatrices, index)
+
+        if (index == -1) {
+            updatedMatrices.push(newDto)
+        }
+        else {
+            updatedMatrices[index] = newDto;
+        }
+
         setMatrices(updatedMatrices);
     }
 
@@ -79,6 +88,10 @@ const MatrixViewComponent = () => {
 
     return (
         <div>
+            <div>
+                <button onClick={() => onButtonClick(0)}>Addition</button>
+                <button onClick={() => onButtonClick(1)}>Multiplication</button>
+            </div>
             {matricesView}
         </div>
     )
