@@ -21,9 +21,8 @@ const MatrixViewComponent = () => {
     }
 
     const onChangeFieldValue = (val: number, [row, col]: [number, number]) => {
-        // let updatedMatrix = [...matrixA];
-        // updatedMatrix[row][col] = val;
-        // setMatrixA(updatedMatrix);
+        let updatedMatrix = matrixA.clone().set([row, col], val);
+        setMatrixA(updatedMatrix);
     }
 
     return (
