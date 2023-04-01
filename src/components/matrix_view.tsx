@@ -4,49 +4,94 @@ import { Matrix } from 'mathjs'
 import { useEffect, useState } from 'react';
 import { MatrixDto, defaultMatrices, getMatrixAddition, getMatrixMultiplication, getReStructuredMatrix } from '@/helpers/matrixHelper';
 import MatrixComponent from './matrix';
+import styles from './matrix.module.css'
+
+enum MatrixOperation {
+    Addition = 0,
+    Multiplication = 1
+}
 
 const MatrixViewComponent = () => {
     const [matrices, setMatrices] = useState<MatrixDto[]>(defaultMatrices);
-    const [selectedItem, setSelection] = useState<number>(0);
+    const [selectedOperation, setSelection] = useState<MatrixOperation>(MatrixOperation.Addition);
     const [changesCount, setChangesCount] = useState<number>(0);
 
     useEffect(() => {
         const [mA, mB] = matrices;
-        const result =
-            selectedItem == 0
-                ? getMatrixAddition(mA.data, mB.data)
-                : getMatrixMultiplication(mA.data, mB.data);
-
-        console.log("hi i am use effect")
-
-        setUpdatedMatrices("result", result);
+        const operation = (op: MatrixOperation) => {
+            switch (op) {
+                case MatrixOperation.Multiplication:
+                    return getMatrixMultiplication(mA.data, mB.data);
+                case MatrixOperation.Addition:
+                default:
+                    return getMatrixAddition(mA.data, mB.data);
+            }
+        }
+        setUpdatedMatrices("result", operation(selectedOperation));
     }, [changesCount])
 
-    const getOrDefaultMatrix = (key: string) => {
+    const getOrDefaultMatrix = (key?: string) => {
         return (matrices.find(m => m.key == key)
-            || matrices[0]).data;
+            || matrices[0]);
+    }
+
+    const getMatricesExcludeResult = () => {
+        return matrices.filter(m => m.key != "result")
     }
 
     const initChange = () => {
         setChangesCount(changesCount + 1);
     }
 
-    const onButtonClick = (selectedItem: number) => {
-        setSelection(selectedItem);
+    const triggerMatricesUpdation = (
+        key: string,
+        [r, c]: [number, number],
+        operation: MatrixOperation
+    ) => {
+        const updatedMatrices =
+            getMatricesExcludeResult()
+                .map(m => {
+                    let data = getReStructuredMatrix(
+                        m.data,
+                        operation == MatrixOperation.Multiplication
+                            && m.key != key
+                            ? [c, r]
+                            : [r, c]
+                    );
+
+                    return {
+                        key: m.key,
+                        data: data
+                    } as MatrixDto;
+                })
+
+        setMatrices(updatedMatrices);
         initChange();
     }
 
-    const onChangeSize = (key: string, [row, col]: [number, number]) => {
-        const updatedMatrix =
-            getReStructuredMatrix(getOrDefaultMatrix(key), [row, col]);
+    const onButtonClick = (selectedOperation: number) => {
+        setSelection(selectedOperation);
+        const defaultMatrix = getOrDefaultMatrix();
+        const [r, c] = defaultMatrix.data.size();
+        triggerMatricesUpdation(
+            defaultMatrix.key,
+            [r, c],
+            selectedOperation
+        );
+    }
 
-        setUpdatedMatrices(key, updatedMatrix);
-        initChange();
+    const onChangeSize = (key: string, [r, c]: [number, number]) => {
+        triggerMatricesUpdation(
+            key,
+            [r, c],
+            selectedOperation
+        );
     }
 
     const onChangeFieldValue = (key: string, val: number, [row, col]: [number, number]) => {
         const updatedMatrix =
             getOrDefaultMatrix(key)
+                .data
                 .clone()
                 .set([row, col], val);
 
@@ -78,6 +123,8 @@ const MatrixViewComponent = () => {
             return (
                 <MatrixComponent
                     key={m.key}
+                    name={m.key}
+                    isDisabled = {m.key == "result"}
                     currMatrix={m.data}
                     onChangeFieldValue={(val, [row, col]) =>
                         onChangeFieldValue(m.key, val, [row, col])}
@@ -86,13 +133,29 @@ const MatrixViewComponent = () => {
             )
         })
 
+    const buttonView =
+        [
+            { name: "Addition", key: MatrixOperation.Addition },
+            { name: "Multiplication", key: MatrixOperation.Multiplication }
+        ].map(op => {
+            return (
+                <button key={"button_" + op.key}
+                    onClick={() => onButtonClick(op.key)}
+                    className={styles.btn + " " + (op.key == selectedOperation && styles.isActive)}
+                >
+                    {op.name}
+                </button>
+            )
+        })
+
     return (
-        <div>
-            <div>
-                <button onClick={() => onButtonClick(0)}>Addition</button>
-                <button onClick={() => onButtonClick(1)}>Multiplication</button>
+        <div className={styles.pageView}>
+            <div className={styles.buttonView}>
+                {buttonView}
             </div>
-            {matricesView}
+            <div className={styles.matricesView}>
+                {matricesView}
+            </div>
         </div>
     )
 }

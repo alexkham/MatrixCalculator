@@ -5,6 +5,8 @@ import styles from './matrix.module.css'
 import { Matrix } from 'mathjs';
 
 interface Props {
+    name: string;
+    isDisabled: boolean;
     currMatrix: Matrix;
     onChangeFieldValue: (val: number, [row, col]: [number, number]) => void;
     onChangeSize: ([row, col]: [number, number]) => void;
@@ -13,11 +15,14 @@ interface Props {
 const MatrixComponent = (newProps: Props) => {
     const currMatrix = newProps.currMatrix;
     const [row, col] = currMatrix.size();
+    const isDisabled = newProps.isDisabled;
 
-
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+        e.target.select();
+    }
     const renderMatrixTable = () => {
         const onChangeField = (val: string, [r, c]: [number, number]) => {
-            newProps.onChangeFieldValue(parseInt(val), [r, c]);
+            newProps.onChangeFieldValue(parseInt(val) || 0, [r, c]);
         }
 
         let rowData = [];
@@ -27,8 +32,10 @@ const MatrixComponent = (newProps: Props) => {
                 columnData.push(<td key={i + "_" + j}>
                     <input
                         type='number'
+                        disabled={isDisabled}
                         className={styles.inputField}
                         value={currMatrix.get([i, j])}
+                        onFocus={e => handleFocus(e)}
                         onChange={e => onChangeField(e.target.value, [i, j])} />
                 </td>)
             }
@@ -49,7 +56,7 @@ const MatrixComponent = (newProps: Props) => {
 
     const renderMarixSizeInput = () => {
         const onChangeSize = (val: string, type: string) => {
-            let parsedValue = parseInt(val);
+            let parsedValue = parseInt(val) || 0;
             if (type == "row") {
                 newProps.onChangeSize([parsedValue, col]);
             }
@@ -62,16 +69,20 @@ const MatrixComponent = (newProps: Props) => {
             <p>
                 <input
                     type='number'
+                    disabled={isDisabled}
                     className={styles.inputSize}
                     onChange={e => onChangeSize(e.target.value, "row")}
                     value={row}
+                    onFocus={e => handleFocus(e)}
                 />
                 <span className={styles.span}>X</span>
                 <input
                     type='number'
+                    disabled={isDisabled}
                     className={styles.inputSize}
                     onChange={e => onChangeSize(e.target.value, "col")}
                     value={col}
+                    onFocus={e => handleFocus(e)}
                 />
             </p>
         )
@@ -79,6 +90,8 @@ const MatrixComponent = (newProps: Props) => {
 
     return (
         <div className={styles.matrixBlock}>
+            <h3>{newProps.name}</h3>
+            <br />
             {renderMatrixTable()}
             <br />
             {renderMarixSizeInput()}

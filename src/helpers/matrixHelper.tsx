@@ -2,7 +2,7 @@ import { Matrix, matrix, add, multiply } from "mathjs";
 
 export interface MatrixDto {
     data: Matrix,
-    key: string
+    key: string,
 }
 
 const mA: Matrix = matrix([[1, 2, 3], [3, 4, 5], [5, 6, 7]]);

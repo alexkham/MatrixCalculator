@@ -1,7 +1,37 @@
+.pageView {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.buttonView {
+    display: flex;
+    justify-content: center;
+}
+
+.matricesView {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+}
+
+.isActive {
+    background-color: blue;
+}
+
 .matrixBlock {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
     padding: 20px;
 }
 
@@ -16,6 +46,6 @@
     text-align: center;
 }
 
-.span{
+.span {
     padding: 0px 10px;
 }
