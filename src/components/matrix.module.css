@@ -30,14 +30,22 @@
     color: white;
 }
 
-.scalarInput, .matrixBlock {
+.scalarInput,
+.matrixBlock {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
 }
 
-.inputBlock{
+.tableBracket {
+    border-left: 2px solid black;
+    padding: 5px 10px;
+    border-right: 2px solid black;
+    border-radius: 10px;
+}
+
+.inputBlock {
     height: 30px;
     margin-top: 40%;
 }

@@ -46,11 +46,13 @@ const MatrixComponent = (newProps: Props) => {
             )
         }
         return (
-            <table>
-                <tbody>
-                    {rowData}
-                </tbody>
-            </table>
+            <div className={styles.tableBracket}>
+                <table>
+                    <tbody>
+                        {rowData}
+                    </tbody>
+                </table>
+            </div>
         )
     }
 
