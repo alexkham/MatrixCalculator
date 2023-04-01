@@ -4,10 +4,6 @@ import { Metadata } from 'next';
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata: Metadata = {
-
-};
-
 export async function generateMetadata({ }) {
   const title = "Matrix Calculator";
   const description =
