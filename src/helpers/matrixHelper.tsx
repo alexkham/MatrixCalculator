@@ -1,5 +1,11 @@
 import { Matrix, matrix, add, multiply } from "mathjs";
 
+export enum MatrixOperation {
+    Addition = 0,
+    Multiplication = 1,
+    ScalarMultiplication = 2
+}
+
 export interface MatrixDto {
     data: Matrix,
     key: string,
@@ -35,3 +41,9 @@ export const getMatrixMultiplication = (
     matrixB: Matrix
 ) =>
     multiply(matrixA, matrixB);
+
+export const getMatrixScalarMultiplication = (
+    matrixA: Matrix,
+    value: number
+) =>
+    multiply(matrixA, value);

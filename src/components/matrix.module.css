@@ -21,18 +21,25 @@
     padding: 10px;
     margin: 10px;
     width: 200px;
+    background: #eee;
+    border-radius: 10px;
 }
 
 .isActive {
     background-color: blue;
+    color: white;
 }
 
-.matrixBlock {
+.scalarInput, .matrixBlock {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
     padding: 20px;
+}
+
+.inputBlock{
+    height: 30px;
+    margin-top: 40%;
 }
 
 .inputField {

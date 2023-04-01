@@ -56,7 +56,7 @@ const MatrixComponent = (newProps: Props) => {
 
     const renderMarixSizeInput = () => {
         const onChangeSize = (val: string, type: string) => {
-            let parsedValue = parseInt(val) || 0;
+            let parsedValue = parseInt(val) || 1;
             if (type == "row") {
                 newProps.onChangeSize([parsedValue, col]);
             }
@@ -90,7 +90,7 @@ const MatrixComponent = (newProps: Props) => {
 
     return (
         <div className={styles.matrixBlock}>
-            <h3>{newProps.name}</h3>
+            <h3>{newProps.name.toUpperCase()}</h3>
             <br />
             {renderMatrixTable()}
             <br />

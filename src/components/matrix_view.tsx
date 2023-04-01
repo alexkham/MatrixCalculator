@@ -2,19 +2,16 @@
 
 import { Matrix } from 'mathjs'
 import { useEffect, useState } from 'react';
-import { MatrixDto, defaultMatrices, getMatrixAddition, getMatrixMultiplication, getReStructuredMatrix } from '@/helpers/matrixHelper';
+import { MatrixDto, MatrixOperation, defaultMatrices, getMatrixAddition, getMatrixMultiplication, getMatrixScalarMultiplication, getReStructuredMatrix } from '@/helpers/matrixHelper';
 import MatrixComponent from './matrix';
 import styles from './matrix.module.css'
 
-enum MatrixOperation {
-    Addition = 0,
-    Multiplication = 1
-}
 
 const MatrixViewComponent = () => {
     const [matrices, setMatrices] = useState<MatrixDto[]>(defaultMatrices);
     const [selectedOperation, setSelection] = useState<MatrixOperation>(MatrixOperation.Addition);
     const [changesCount, setChangesCount] = useState<number>(0);
+    const [scalarInput, setScalarInput] = useState<number>(0);
 
     useEffect(() => {
         const [mA, mB] = matrices;
@@ -22,6 +19,8 @@ const MatrixViewComponent = () => {
             switch (op) {
                 case MatrixOperation.Multiplication:
                     return getMatrixMultiplication(mA.data, mB.data);
+                case MatrixOperation.ScalarMultiplication:
+                    return getMatrixScalarMultiplication(mA.data, scalarInput);
                 case MatrixOperation.Addition:
                 default:
                     return getMatrixAddition(mA.data, mB.data);
@@ -118,25 +117,49 @@ const MatrixViewComponent = () => {
         setMatrices(updatedMatrices);
     }
 
+
     const matricesView =
         matrices.map(m => {
-            return (
-                <MatrixComponent
-                    key={m.key}
-                    name={m.key}
-                    isDisabled = {m.key == "result"}
-                    currMatrix={m.data}
-                    onChangeFieldValue={(val, [row, col]) =>
-                        onChangeFieldValue(m.key, val, [row, col])}
-                    onChangeSize={([row, col]) => onChangeSize(m.key, [row, col])}
-                />
-            )
+            if (selectedOperation == MatrixOperation.ScalarMultiplication
+                && m.key == "matrixB"
+            ) {
+                return (
+                    <div className={styles.scalarInput}>
+                        <h3>SCALAR INPUT</h3>
+                        <br />
+                        <input
+                            type='number'
+                            onChange={e => {
+                                setScalarInput(parseInt(e.target.value) || 0);
+                                initChange();
+                            }}
+                            onFocus={e => e.target.select()}
+                            value={scalarInput}
+                            className={styles.inputBlock}
+                        />
+                    </div>
+                );
+            }
+            else {
+                return (
+                    <MatrixComponent
+                        key={m.key}
+                        name={m.key}
+                        isDisabled={m.key == "result"}
+                        currMatrix={m.data}
+                        onChangeFieldValue={(val, [row, col]) =>
+                            onChangeFieldValue(m.key, val, [row, col])}
+                        onChangeSize={([row, col]) => onChangeSize(m.key, [row, col])}
+                    />
+                )
+            }
         })
 
     const buttonView =
         [
             { name: "Addition", key: MatrixOperation.Addition },
-            { name: "Multiplication", key: MatrixOperation.Multiplication }
+            { name: "Multiplication", key: MatrixOperation.Multiplication },
+            { name: "Scalar Multiplication", key: MatrixOperation.ScalarMultiplication }
         ].map(op => {
             return (
                 <button key={"button_" + op.key}
