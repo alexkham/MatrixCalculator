@@ -124,7 +124,7 @@ const MatrixViewComponent = () => {
                 && m.key == "matrixB"
             ) {
                 return (
-                    <div className={styles.scalarInput}>
+                    <div className={styles.scalarInput} key={"scalarInput"}>
                         <h3>SCALAR INPUT</h3>
                         <br />
                         <input
