@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './matrix.module.css'
-import { Matrix } from 'mathjs';
+import { Matrix, string } from 'mathjs';
+import InputFieldComponent from './inputField';
 
 interface Props {
     name: string;
@@ -17,11 +18,11 @@ const MatrixComponent = (newProps: Props) => {
     const [row, col] = currMatrix.size();
     const isDisabled = newProps.isDisabled;
 
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement, Element>) => {
-        e.target.select();
-    }
+    const [error, setError] = useState<[string, string] | undefined>(undefined);
+
     const renderMatrixTable = () => {
         const onChangeField = (val: string, [r, c]: [number, number]) => {
+            // val = val.replace(/^0+/, '');
             newProps.onChangeFieldValue(parseInt(val) || 0, [r, c]);
         }
 
@@ -29,15 +30,17 @@ const MatrixComponent = (newProps: Props) => {
         for (let i = 0; i < row; i++) {
             let columnData = [];
             for (let j = 0; j < col; j++) {
-                columnData.push(<td key={i + "_" + j}>
-                    <input
-                        type='number'
-                        disabled={isDisabled}
-                        className={styles.inputField}
-                        value={currMatrix.get([i, j])}
-                        onFocus={e => handleFocus(e)}
-                        onChange={e => onChangeField(e.target.value, [i, j])} />
-                </td>)
+                columnData.push(
+                    <td key={i + "_" + j}>
+                        <InputFieldComponent
+                            disabled={isDisabled}
+                            className={styles.inputField}
+                            defaultValue={currMatrix.get([i, j])}
+                            onChange={val => onChangeField(val, [i, j])}
+                            isNumeric={true}
+                        />
+                    </td>
+                )
             }
             rowData.push(
                 <tr key={i}>
@@ -58,35 +61,49 @@ const MatrixComponent = (newProps: Props) => {
 
     const renderMarixSizeInput = () => {
         const onChangeSize = (val: string, type: string) => {
-            let parsedValue = parseInt(val) || 1;
-            if (type == "row") {
-                newProps.onChangeSize([parsedValue, col]);
+            let parsedValue = parseInt(val) || 0;
+            if (parsedValue < 1) {
+                setError([type, "Value can't be 0 or empty"])
+            }
+            else if (parsedValue > 20) {
+                setError([type, "Value can't be more than 20"])
             }
             else {
-                newProps.onChangeSize([row, parsedValue]);
+                setError(undefined);
+                if (type == "row") {
+                    newProps.onChangeSize([parsedValue, col]);
+                }
+                else {
+                    newProps.onChangeSize([row, parsedValue]);
+                }
             }
         }
 
+        const rowErr = error && error[0] == "row" && error[1] || undefined;
+        const colErr = error && error[0] == "col" && error[1] || undefined;
+
         return (
-            <p>
-                <input
-                    type='number'
+            <div style={{ display: 'flex' }}>
+                <InputFieldComponent
+                    type={"number"}
                     disabled={isDisabled}
                     className={styles.inputSize}
-                    onChange={e => onChangeSize(e.target.value, "row")}
-                    value={row}
-                    onFocus={e => handleFocus(e)}
+                    onChange={val => onChangeSize(val, "row")}
+                    defaultValue={row}
+                    error={rowErr}
+                    isNumeric={true}
                 />
                 <span className={styles.span}>X</span>
-                <input
-                    type='number'
+                <InputFieldComponent
+                    type={"number"}
                     disabled={isDisabled}
                     className={styles.inputSize}
-                    onChange={e => onChangeSize(e.target.value, "col")}
-                    value={col}
-                    onFocus={e => handleFocus(e)}
+                    onChange={val => onChangeSize(val, "col")}
+                    defaultValue={col}
+                    error={colErr}
+                    isNumeric={true}
                 />
-            </p>
+            </div>
         )
     }
 
