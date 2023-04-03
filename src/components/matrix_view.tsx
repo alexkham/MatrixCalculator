@@ -136,7 +136,6 @@ const MatrixViewComponent = () => {
                             }}
                             value={scalarInput}
                             className={styles.inputBlock}
-                            isNumeric={true}
                         />
                     </div>
                 );

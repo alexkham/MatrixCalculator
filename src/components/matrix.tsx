@@ -37,7 +37,6 @@ const MatrixComponent = (newProps: Props) => {
                             className={styles.inputField}
                             value={currMatrix.get([i, j])}
                             onChange={val => onChangeField(val, [i, j])}
-                            isNumeric={true}
                         />
                     </td>
                 )
@@ -91,7 +90,6 @@ const MatrixComponent = (newProps: Props) => {
                     onChange={val => onChangeSize(val, "row")}
                     value={row}
                     error={rowErr}
-                    isNumeric={true}
                 />
                 <span className={styles.span}>X</span>
                 <InputFieldComponent
@@ -101,7 +99,6 @@ const MatrixComponent = (newProps: Props) => {
                     onChange={val => onChangeSize(val, "col")}
                     value={col}
                     error={colErr}
-                    isNumeric={true}
                 />
             </div>
         )

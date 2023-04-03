@@ -9,7 +9,6 @@ interface InputProps {
     disabled?: boolean;
     error?: string;
     type?: React.HTMLInputTypeAttribute;
-    isNumeric?: boolean;
 }
 const InputFieldComponent = (props: InputProps) => {
     const [value, setValue] = useState(props.value);
@@ -19,11 +18,10 @@ const InputFieldComponent = (props: InputProps) => {
     }, [props.value])
 
     const onChangeValue = (value: string) => {
-        if (props.isNumeric) {
+        if (props.type == "number") {
             value = value.length > 1
                 ? value.replace(/^0+/, '') // replace all leading 0s
                 : value
-            value = value.replace(/\D+/g, '') // replace all characters
             value = value == "" ? "0" : value
         }
 
