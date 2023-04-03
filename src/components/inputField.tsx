@@ -1,18 +1,22 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface InputProps {
     onChange: (val: string) => void;
     className: string;
-    defaultValue?: string | number;
+    value?: string | number;
     disabled?: boolean;
     error?: string;
     type?: React.HTMLInputTypeAttribute;
     isNumeric?: boolean;
 }
 const InputFieldComponent = (props: InputProps) => {
-    const [value, setValue] = useState(props.defaultValue);
+    const [value, setValue] = useState(props.value);
+
+    useEffect(() => {
+        setValue(props.value);
+    }, [props.value])
 
     const onChangeValue = (value: string) => {
         if (props.isNumeric) {

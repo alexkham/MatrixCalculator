@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import styles from './matrix.module.css'
-import { Matrix, string } from 'mathjs';
+import { Matrix } from 'mathjs';
 import InputFieldComponent from './inputField';
 
 interface Props {
@@ -22,7 +22,6 @@ const MatrixComponent = (newProps: Props) => {
 
     const renderMatrixTable = () => {
         const onChangeField = (val: string, [r, c]: [number, number]) => {
-            // val = val.replace(/^0+/, '');
             newProps.onChangeFieldValue(parseInt(val) || 0, [r, c]);
         }
 
@@ -33,9 +32,10 @@ const MatrixComponent = (newProps: Props) => {
                 columnData.push(
                     <td key={i + "_" + j}>
                         <InputFieldComponent
+                            type={"number"}
                             disabled={isDisabled}
                             className={styles.inputField}
-                            defaultValue={currMatrix.get([i, j])}
+                            value={currMatrix.get([i, j])}
                             onChange={val => onChangeField(val, [i, j])}
                             isNumeric={true}
                         />
@@ -89,7 +89,7 @@ const MatrixComponent = (newProps: Props) => {
                     disabled={isDisabled}
                     className={styles.inputSize}
                     onChange={val => onChangeSize(val, "row")}
-                    defaultValue={row}
+                    value={row}
                     error={rowErr}
                     isNumeric={true}
                 />
@@ -99,7 +99,7 @@ const MatrixComponent = (newProps: Props) => {
                     disabled={isDisabled}
                     className={styles.inputSize}
                     onChange={val => onChangeSize(val, "col")}
-                    defaultValue={col}
+                    value={col}
                     error={colErr}
                     isNumeric={true}
                 />

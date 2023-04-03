@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { MatrixDto, MatrixOperation, defaultMatrices, getMatrixAddition, getMatrixMultiplication, getMatrixScalarMultiplication, getReStructuredMatrix } from '@/helpers/matrixHelper';
 import MatrixComponent from './matrix';
 import styles from './matrix.module.css'
+import InputFieldComponent from './inputField';
 
 
 const MatrixViewComponent = () => {
@@ -127,15 +128,15 @@ const MatrixViewComponent = () => {
                     <div className={styles.scalarInput} key={"scalarInput"}>
                         <h3>SCALAR INPUT</h3>
                         <br />
-                        <input
+                        <InputFieldComponent
                             type='number'
-                            onChange={e => {
-                                setScalarInput(parseInt(e.target.value) || 0);
+                            onChange={val => {
+                                setScalarInput(parseInt(val) || 0);
                                 initChange();
                             }}
-                            onFocus={e => e.target.select()}
                             value={scalarInput}
                             className={styles.inputBlock}
+                            isNumeric={true}
                         />
                     </div>
                 );
