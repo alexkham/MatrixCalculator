@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 
 interface InputProps {
-    value?: string | number;
     onChange: (val: string) => void;
     className: string;
     defaultValue?: string | number;
@@ -17,10 +16,14 @@ const InputFieldComponent = (props: InputProps) => {
 
     const onChangeValue = (value: string) => {
         if (props.isNumeric) {
-            value = value.length > 1 ? value.replace(/^0+/, '') : value // replace all leading 0s
+            value = value.length > 1
+                ? value.replace(/^0+/, '') // replace all leading 0s
+                : value
             value = value.replace(/\D+/g, '') // replace all characters
+            value = value == "" ? "0" : value
         }
-        setValue(value || "")
+
+        setValue(value)
         props.onChange(value);
     }
     const errorBlock = props.error && (
@@ -42,7 +45,6 @@ const InputFieldComponent = (props: InputProps) => {
                 disabled={props.disabled}
                 className={props.className}
                 onChange={e => onChangeValue(e.target.value)}
-                // defaultValue={props.defaultValue}
                 onFocus={e => e.target.select()}
                 value={value}
             />
