@@ -11,13 +11,13 @@ export interface MatrixDto {
     key: string,
 }
 
-const mA: Matrix = matrix([[1, 2, 3], [3, 4, 5], [5, 6, 7]]);
+const mA: Matrix = matrix([[0, 2, 3], [3, 4, 5], [5, 6, 7]]);
 const mB: Matrix = matrix([[1, -1, 2], [2, -2, 2], [3, -3, 1]]);
 
 export const defaultMatrices: MatrixDto[] =
     [{
         data: mA,
-        key: "matrixA"
+        key: "matrix A"
     },
     {
         data: mB,
